@@ -75,7 +75,7 @@ int mp_bt_characteristic_value_set(mp_bt_characteristic_handle_t handle, const v
 
 // Read the characteristic value. The size of the buffer must be given in
 // value_len, which will be updated with the actual value.
-int mp_bt_characteristic_value_get(mp_bt_characteristic_handle_t handle, void **value, size_t *value_len);
+int mp_bt_characteristic_value_get(mp_bt_characteristic_handle_t handle, void *value, size_t *value_len);
 
 void mp_bt_characteristic_value_wait(mp_bt_characteristic_t *handle);
 

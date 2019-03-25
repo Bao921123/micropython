@@ -340,18 +340,13 @@ STATIC MP_DEFINE_CONST_FUN_OBJ_2(characteristic_notify_obj, characteristic_notif
 
 STATIC mp_obj_t characteristic_read(mp_obj_t self_in) {
     mp_bt_characteristic_t *characteristic = self_in;
-    uint8_t *data = NULL;
+    uint8_t data[MP_BT_MAX_ATTR_SIZE];
     size_t value_len = MP_BT_MAX_ATTR_SIZE;
-    int errno_ = mp_bt_characteristic_value_get(characteristic->value_handle, (void **)&data, &value_len);
+    int errno_ = mp_bt_characteristic_value_get(characteristic->value_handle, data, &value_len);
     if (errno_ != 0) {
         mp_raise_OSError(errno_);
     }
-    mp_obj_t result = mp_const_none;
-    if (data != NULL) {
-        result = mp_obj_new_bytes(data, value_len);
-        free(data);
-    }
-    return result;
+    return mp_obj_new_bytes(data, value_len);
 }
 STATIC MP_DEFINE_CONST_FUN_OBJ_1(characteristic_read_obj, characteristic_read);
 

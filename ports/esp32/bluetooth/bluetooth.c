@@ -459,7 +459,7 @@ int mp_bt_characteristic_notify(mp_bt_characteristic_handle_t handle, const void
     return mp_bt_status_errno();
 }
 
-int mp_bt_characteristic_value_get(mp_bt_characteristic_handle_t handle, void **value, size_t *value_len) {
+int mp_bt_characteristic_value_get(mp_bt_characteristic_handle_t handle, void *value, size_t *value_len) {
     uint16_t bt_len;
     const uint8_t *bt_ptr;
     esp_err_t err = esp_ble_gatts_get_attr_value(handle, &bt_len, &bt_ptr);
@@ -470,23 +470,19 @@ int mp_bt_characteristic_value_get(mp_bt_characteristic_handle_t handle, void **
         // Copy up to *value_len bytes.
         *value_len = bt_len;
     }
-    *value = malloc(*value_len);
-    memcpy(*value, bt_ptr, *value_len);
+    memcpy(value, bt_ptr, *value_len);
     return 0;
 }
 
 void mp_bt_characteristic_value_wait(mp_bt_characteristic_t *characteristic) {
     if (characteristic->updated) {
-        uint8_t *data = NULL;
-        size_t value_len = MP_BT_MAX_ATTR_SIZE;
-        int errno_ = mp_bt_characteristic_value_get(characteristic->value_handle, (void **)&data, &value_len);
-        if (errno_ != 0) {
-            mp_raise_OSError(errno_);
+        uint16_t bt_len;
+        const uint8_t *bt_ptr;
+        esp_err_t err = esp_ble_gatts_get_attr_value(characteristic->value_handle, &bt_len, &bt_ptr);
+        if (err != 0) {
+            mp_raise_OSError(mp_bt_esp_errno(err));
         }
-        if (data != NULL) {
-            mp_call_function_2(characteristic->callback, characteristic, mp_obj_new_bytes(data, value_len));
-            free(data);
-        }
+        mp_call_function_2(characteristic->callback, characteristic, mp_obj_new_bytes(bt_ptr, bt_len));
         characteristic->updated = false;
     }
 }

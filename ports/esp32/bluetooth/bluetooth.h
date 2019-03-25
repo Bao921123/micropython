@@ -35,8 +35,6 @@ typedef esp_ble_adv_type_t mp_bt_adv_type_t;
 
 #define MP_BT_MAX_ATTR_SIZE (512)
 
-#define MP_BT_MAX_CONNECTIONS (5)
-
 void mp_bt_init(void);
 
 typedef esp_bt_uuid_t mp_bt_uuid_t;
