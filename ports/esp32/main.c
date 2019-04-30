@@ -98,7 +98,7 @@ void mp_task(void *pvParameter) {
 soft_reset:
     // initialise the stack pointer for the main thread
     mp_stack_set_top((void *)sp);
-    mp_stack_set_limit(MP_TASK_STACK_SIZE - 1024);
+    mp_stack_set_limit(MP_TASK_STACK_SIZE * 4 - 1024);
     gc_init(mp_task_heap, mp_task_heap + mp_task_heap_size);
     mp_init();
     mp_obj_list_init(mp_sys_path, 0);
